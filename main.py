@@ -8,6 +8,7 @@ import torch.nn.functional as F
 import requests
 from pathlib import Path
 import numpy as np
+from helper_functions import plot_decision_boundary
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print(device)
@@ -40,22 +41,6 @@ model = MyModel()
 
 criterion = nn.BCELoss()
 optimizer = optim.Adam(model.parameters(), lr=0.1)
-
-def plot_decision_boundary(model, X, y):
-    x_min, x_max = X[:, 0].min() - 0.1, X[:, 0].max() + 0.1
-    y_min, y_max = X[:, 1].min() - 0.1, X[:, 1].max() + 0.1
-    xx, yy = np.meshgrid(np.linspace(x_min, x_max, 100),
-                         np.linspace(y_min, y_max, 100))
-    
-    X_grid = np.c_[xx.ravel(), yy.ravel()]
-    Z = model(torch.tensor(X_grid, dtype=torch.float32)).detach().numpy().reshape(xx.shape)
-    
-    plt.contourf(xx, yy, Z, cmap=plt.cm.RdBu, alpha=0.8)
-    plt.scatter(X[:, 0], X[:, 1], c=y, cmap=plt.cm.RdBu, edgecolors='k')
-    plt.xlabel('Feature 1')
-    plt.ylabel('Feature 2')
-    plt.title('Decision Boundary')
-    plt.show()
 
 def train_model(model, criterion, optimizer, X_train, y_train, epochs=100):
     for epoch in range(epochs):
